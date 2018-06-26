@@ -53,7 +53,7 @@ class Page
         return $this->tpl->draw($name, $returnHTML);
     }
 
-    public function __destruct(argument)
+    public function __destruct()
     {
         // Criar o template do rodapé
         if ($this->options["footer"] === true) {
