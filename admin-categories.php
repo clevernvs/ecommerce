@@ -3,6 +3,7 @@
 use \Hcode\PageAdmin;
 use \Hcode\User;
 use \Hcode\Model\Category;
+use \Hcode\Model\Product;
 
 // Rota p/ CATEGORIAS
 $app->get("/admin/categories", function () {
@@ -54,7 +55,7 @@ $app->get("/admin/categories/:idcategory/delete", function ($idcategory) {
     exit;
 });
 
-// Rota p / ATUALIZAR CATEGORIAS
+// ATUALIZAR CATEGORIAS via GET
 $app->get("/admin/categories/:idcategory", function ($idcategory) {
 
     User::verifyLogin();
@@ -69,7 +70,7 @@ $app->get("/admin/categories/:idcategory", function ($idcategory) {
 
 });
 
-// Rota p / ATUALIZAR CATEGORIAS
+// ATUALIZAR CATEGORIAS via POST
 $app->post("/admin/categories/:idcategory", function ($idcategory) {
 
     User::verifyLogin();
@@ -83,18 +84,58 @@ $app->post("/admin/categories/:idcategory", function ($idcategory) {
     exit;
 });
 
-// Rota p/ CATEGORIAS
-$app->get("/categories/:idcategory", function ($idcategory) {
+
+$app->get("/admin/categories/:idcategory/products", function ($idcategory) {
+
+    User::verifyLogin();
 
     $category = new Category();
     $category->get((int)$idcategory);
 
-    $page = new Page();
-    $page->setTpl("category", [
-        'category' => $category->getValue(),
-        'products' => []
+    $page = new PageAdmin();
+    $page->setTpl("categories-products", [
+        'category'=>$category->getValue(),
+        'productsRelated'=>$category->getProducts(),
+        'productsNotRelated'=>$category->getProducts(false)
     ]);
+
 });
 
+
+// ADD
+$app->get("/admin/categories/:idcategory/products/:idproduct/add", function ($idcategory, $idproduct) {
+
+    User::verifyLogin();
+
+    $category = new Category();
+    $category->get((int)$idcategory);
+
+    $product = new Product();
+    $product->get((int)$idproduct);
+
+    $category->addProduct($product);
+    
+    header("Location: /admin/categories/".$idcategory."/products");
+    exit;
+
+});
+
+// REMOVER
+$app->get("/admin/categories/:idcategory/products/:idproduct/remove", function ($idcategory, $idproduct) {
+
+    ser::verifyLogin();
+
+    $category = new Category();
+    $category->get((int)$idcategory);
+
+    $product = new Product();
+    $product->get((int)$idproduct);
+
+    $category->removeProduct($product);
+
+    header("Location: /admin/categories/" . $idcategory . "/products");
+    exit;
+
+});
 
 ?>
