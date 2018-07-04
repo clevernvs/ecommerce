@@ -152,7 +152,7 @@ class Product extends Model
             INNER JOIN tb_productscategories b ON a.idcategory = b.idcategory
             WHERE b.idproduct = :idproduct"
         , [
-            ':idproduct' =>$this->getidproduct();
+            ':idproduct' =>$this->getidproduct()
         ]);
 
     }
