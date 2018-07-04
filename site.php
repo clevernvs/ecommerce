@@ -62,9 +62,53 @@ $app->get("/cart", function () {
     $cart = Cart::getFromSession();
 
     $page = new Page();
-    $page->setTpl("cart");
+    $page->setTpl("cart", [
+        'cart' =>$cart->getValues(),
+        'product' =>$cart->getProducts()
+    ]);
 });
 
+// ADICIONAR PRODUTO AO CARRINHO
+$app->get("/cart/:idproduct/add", function ($idproduct) {
 
+    $product = new Product();
+    $product->get((int)$idproduct);
+
+    $cart = Cart::getFromSession();
+
+    $qtd = (isset($_GET['qtd'])) ? ()$_GET['qtd'] : 1;
+    for ($i=0; $i < $qtd; $i++) { 
+        $cart->addProduct($product);        
+    }
+
+    header("Location: /cart");
+    exit;
+});
+
+// REMOVER UM PRODUTO DO CARRINHO
+$app->get("/cart/:idproduct/minus", function ($idproduct) {
+
+    $product = new Product();
+    $product->get((int)$idproduct);
+
+    $cart = Cart::getFromSession();
+    $cart->removeProduct($product);
+
+    header("Location: /cart");
+    exit;
+});
+
+// REMOVER TODOS OS PRODUTOS DO CARRINHO
+$app->get("/cart/:idproduct/remove", function ($idproduct) {
+
+    $product = new Product();
+    $product->get((int)$idproduct);
+
+    $cart = Cart::getFromSession();
+    $cart->removeProduct($product, true);
+
+    header("Location: /cart");
+    exit;
+});
 
 ?>
