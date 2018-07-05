@@ -4,6 +4,8 @@ use \Hcode\Page;
 use \Hcode\Model\Product;
 use \Hcode\Model\Category;
 use \Hcode\Model\Cart;
+use \Hcode\Model\Address;
+use \Hcode\Model\User;
 
 
 // Rota p/ o SITE
@@ -118,7 +120,63 @@ $app->post("/cart/freight", function ($idproduct) {
     $cart = Cart::getFromSession();
     $cart->setFreight($_POST['zipcode']);
 
+    // Redirecionar o usuário para...
     header("Location: /cart");
+    exit;
+});
+
+$app->get("/checkout", function () {
+    // Verficiar se o usuários está logado
+    User::verifyLogin(false);
+
+    $cart = Cart::getFromSession();
+
+    $address = new Address();
+
+    $page = new Page();
+    $page->setTpl("checkout", [
+        'cart' => $cart->getValues(),
+        'address' => $address->getValues()
+    ]);
+    
+});
+
+// LOGIN PARA O SITE
+$app->get("/login", function () {
+    
+    $page = new Page();
+    $page->setTpl("login", [
+        'error' => User::setError()
+    ]);
+
+});
+
+// LOGIN PARA O SITE via POST
+$app->post("/login", function () {
+    
+    try {
+
+        // Verficiar o login
+        User::login($_POST['login'], $_POST['password']);
+
+    } catch(Exception $e) {
+        // Em caso de erro, exibir mensagem
+        User::setError($e->getMessage());
+    }
+
+    // Redirecionar o usuário para...
+    header("Location: /checkout");
+    exit;
+});
+
+// LOGOUT
+$app->get("/logout", function () {
+
+    // Fazer logout
+    User::logout();
+
+    // Redirecionar o usuário para...
+    header("Location: /login");
     exit;
 });
 
