@@ -4,6 +4,15 @@ namespace Hcode;
 
 use Rain\Tpl;
 
+/*
+
+__construct()
+setData()
+setTpl()
+__destruct()
+
+ */
+
 class Page
 {
     private $tpl;

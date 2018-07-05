@@ -6,6 +6,21 @@ use \Hcode\DB\Sql;
 use \Hcode\Model;
 use \Hcode\Mailer;
 
+/*
+
+::listAll()
+::checkList()
+save()
+get()
+delete()
+checkPhoto()
+getValues()
+setPhoto()
+getFromURL()
+getCategories()
+
+ */
+
 class Product extends Model
 {
    

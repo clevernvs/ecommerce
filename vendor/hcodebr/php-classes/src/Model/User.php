@@ -22,9 +22,12 @@ delete()
 ::validForgotDecrypt()
 ::setForgotUsed()
 setPassword()
+::setErrorRegister()
+::getErrorRegister()
 ::clearErrorRegister()
 ::checkLoginExist()
 getPasswordHash()
+
 
  */
 
@@ -32,6 +35,8 @@ class User extends Model
 {
     const SESSION = "User";
     const SECRET = "HcodePhp7_Secret";
+    const ERROR = "UserError";
+    const ERROR_REGISTER = "UserErrorRegister";
 
     public static function getFromSession()
     {
@@ -262,6 +267,20 @@ class User extends Model
             ":password"=>$password,
             ":iduser"=>$this->getiduser()
         ));
+    }
+
+    public static function setErrorRegister($msg)
+    {
+        $_SESSION[User::ERROR_REGISTER] = $msg;
+    }
+
+    public static function getErrorRegister()
+    {
+        $msg = (isset($_SESSION[User::ERROR_REGISTER]) && $_SESSION[User::ERROR_REGISTER]) ? $_SESSION[User::ERROR_REGISTER] : '';
+
+        User::clearErrorRegister();
+
+        return $msg;
     }
 
     public static function clearErrorRegister()
