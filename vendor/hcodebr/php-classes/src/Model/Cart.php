@@ -8,6 +8,29 @@ use \Hcode\Mailer;
 use \Hcode\Model\Product;
 use \Hcode\Model\User;
 
+/*
+
+::getFromSession()
+setToSession()
+getFromSessionID()
+get()
+save()
+addProduct()
+removeProduct()
+getProduct()
+getProductsTotals()
+setFreight()
+::formatValueToDecimal()
+::setMsgError()
+::getMsgError()
+::clearMsgError()
+updateFreight()
+getValues()
+getCalculateTotal()
+
+ */
+
+
 class Cart extends Model
 {
     const SESSION = "Cart";

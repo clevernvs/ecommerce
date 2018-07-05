@@ -6,6 +6,28 @@ use \Hcode\DB\Sql;
 use \Hcode\Model;
 use \Hcode\Mailer;
 
+/*
+
+::getFromSession()
+::checkLogin()
+::login()
+::verifyLogin()
+::logout()
+::listAll()
+save()
+get()
+update()
+delete()
+::getForgot()
+::validForgotDecrypt()
+::setForgotUsed()
+setPassword()
+::clearErrorRegister()
+::checkLoginExist()
+getPasswordHash()
+
+ */
+
 class User extends Model
 {
     const SESSION = "User";

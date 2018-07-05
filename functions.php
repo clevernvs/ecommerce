@@ -2,6 +2,14 @@
 
 use \Hcode\Model\User;
 
+/*
+
+formatPrice()
+checkLogin()
+getUserName()
+
+*/
+
 function formatPrice (float $vlprice) 
 {   
 
