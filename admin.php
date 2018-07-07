@@ -3,7 +3,7 @@
 use \Hcode\PageAdmin;
 use \Hcode\User;
 
-// Rota p/ o ADMINISTRADOR
+//o ADMINISTRADOR
     $app->get('/admin', function () {
 
     User::verifyLogin();
@@ -13,7 +13,7 @@ use \Hcode\User;
 
 });
 
-// Rota p/ FAZER LOGIN
+//FAZER LOGIN
 $app->get('/admin/login', function () {
 
     $page = new PageAdmin([
@@ -24,7 +24,7 @@ $app->get('/admin/login', function () {
 
 });
 
-// Rota p/ VALIDAR LOGIN
+//VALIDAR LOGIN
 $app->post('/admin/login', function () {
 
     User::login($_POST["login"], $POST["password"]);
@@ -33,7 +33,7 @@ $app->post('/admin/login', function () {
     exit;
 });
 
-// Rota p/ FAZER LOGOUT
+//FAZER LOGOUT
 $app->get('/admin/logout', function () {
 
     User::logout();
@@ -43,7 +43,7 @@ $app->get('/admin/logout', function () {
 
 });
 
-// Rota p/ PERDEU A SENHA
+//PERDEU A SENHA
 $app->get("/admin/forgot", function () {
 
     $page = new PageAdmin([
@@ -54,7 +54,7 @@ $app->get("/admin/forgot", function () {
 
 });
 
-// Rota p/ VERIFICAÇÃO DE EMAIL DA RECUPERAÇÃO DE SENHA
+//VERIFICAÇÃO DE EMAIL DA RECUPERAÇÃO DE SENHA
 $app->post("/admin/forgot", function () {
 
     $user = User::getForgot($_POST["email"]);

@@ -10,13 +10,19 @@ getUserName()
 
 */
 
-function formatPrice (float $vlprice) 
+// Formatar preço para valor 0,00
+function formatPrice ($vlprice) 
 {   
+
+    if (!$vlprice > 0) {
+        $vlprice = 0; 
+    }
 
     return number_format($vlprice, 2, ",", ".");
 
 }
 
+// Chegar login
 function checkLogin($inadmin = true)
 {
 
@@ -24,11 +30,13 @@ function checkLogin($inadmin = true)
 
 }
 
+// Capturar o nome do usuário
 function getUserName()
 {
-
+    // Capiturar a sessão do usuário
     $user = User::getFromSession();
 
+    // Retornar o nome
     return $user->getdesperson();
 
 }

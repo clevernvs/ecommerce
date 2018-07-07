@@ -120,7 +120,7 @@ $app->post("/cart/freight", function ($idproduct) {
     $cart = Cart::getFromSession();
     $cart->setFreight($_POST['zipcode']);
 
-    // Redirecionar o usuário para...
+    // Redirecionar para...
     header("Location: /cart");
     exit;
 });
@@ -166,7 +166,7 @@ $app->post("/login", function () {
         User::setError($e->getMessage());
     }
 
-    // Redirecionar o usuário para...
+    // Redirecionar para...
     header("Location: /checkout");
     exit;
 });
@@ -177,12 +177,12 @@ $app->get("/logout", function () {
     // Fazer logout
     User::logout();
 
-    // Redirecionar o usuário para...
+    // Redirecionar para...
     header("Location: /login");
     exit;
 });
 
-// 
+// REGISTRAR
 $app->post("/register", function () {
 
     $_SESSION['registerValues'] = $_POST;
@@ -191,7 +191,7 @@ $app->post("/register", function () {
     if (!isset($_POST['name']) || $_POST ['name'] == '') {
         
         User::setErrorRegister("Por favor, preencha o seu nome.");
-        // Redirecionar o usuário para...
+        // Redirecionar para...
         header("Location: /login");
         exit;
     }
@@ -200,7 +200,7 @@ $app->post("/register", function () {
     if (!isset($_POST['email']) || $_POST['email'] == '') {
 
         User::setErrorRegister("Por favor, preencha o seu e-mail.");
-        // Redirecionar o usuário para...
+        // Redirecionar para...
         header("Location: /login");
         exit;
     }
@@ -209,7 +209,7 @@ $app->post("/register", function () {
     if (!isset($_POST['password']) || $_POST['password'] == '') {
 
         User::setErrorRegister("Por favor, digite a sua senha.");
-        // Redirecionar o usuário para...
+        // Redirecionar para...
         header("Location: /login");
         exit;
     }
@@ -218,7 +218,7 @@ $app->post("/register", function () {
     if (User::checkLoginExist($_POST['email']) === true) {
 
         User::setErrorRegister("Esse e-mail já está sendo usado por outro usuário.");
-        // Redirecionar o usuário para...
+        // Redirecionar para...
         header("Location: /login");
         exit;
     }
@@ -236,10 +236,77 @@ $app->post("/register", function () {
 
     // Autenticar o usuário
     User::login($_POST['email'], $_POST['password']);
-
-    // Redirecionar o usuário para...
+    
+    // Redirecionar para...
     header("Location: /checkout");
     exit;
+});
+
+// ================
+
+// PERDEU A SENHA
+$app->get("/forgot", function () {
+    
+    // Redirecionar para...
+    $page = new Page();
+    $page->setTpl("forgot");
+
+});
+
+// VERIFICAÇÃO DE E-MAIL DA RECUPERAÇÃO DE SENHA via POST
+$app->post("/forgot", function () {
+
+    // Enviar e-mail para o usuário
+    $user = User::getForgot($_POST["email"], false);
+
+    // Redirecionar para...
+    header("Location: /forgot/sent");
+    exit;
+});
+
+// 
+$app->get("/forgot/sent", function () {
+    // Redirecionar para...
+    $page = new Page();
+    $page->setTpl("forgot-sent");
+
+});
+
+// REDEFINIR A SENHA
+$app->get("/forgot/reset", function () {
+
+    $user = User::validForgotDecrypt($_GET["code"]);
+    
+    // Redirecionar para...
+    $page = new Page();
+    $page->setTpl("forgot-reset", array(
+        "name" => $user["desperson"],
+        "code" => $_GET["code"]
+    ));
+
+});
+
+
+// REDEFINIR A SENHA via POST
+$app->post("/forgot/reset", function () {
+
+    $forgot = User::validForgotDecrypt($_POST["code"]);
+
+    User::setForgotUsed($forgot["idrecovery"]);
+
+    $user = new User();
+    $user->get((int)$fogot["iduser"]);
+
+    $password = password_hash($_POST["password"], PASSWORD_DEFAULT, [
+        "cost" => 12
+    ]);
+
+    $user->setPassword($password);
+
+    // Redirecionar para...
+    $page = new Page();
+    $page->setTpl("forgot-reset-sucess");
+
 });
 
 

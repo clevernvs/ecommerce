@@ -6,7 +6,7 @@
     Produtos da Categoria {$category.descategory}
   </h1>
   <ol class="breadcrumb">
-    <li><a href="/admin"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li><a href="/admin"><i class="fas fa-dashboard"></i> Home</a></li>
     <li><a href="/admin/categories">Categorias</a></li>
     <li><a href="/admin/categories/{$category.idcategory}">{$category.descategory}</a></li>
     <li class="active"><a href="/admin/categories/{$category.idcategory}/products">Produtos</a></li>
@@ -39,7 +39,7 @@
                             <td>{$value.idproduct}</td>
                             <td>{$value.desproduct}</td>
                             <td>
-                                <a href="/admin/categories/{$category.idcategory}/products/{$value.idproduct}/add" class="btn btn-primary btn-xs pull-right"><i class="fa fa-arrow-right"></i> Adicionar</a>
+                                <a href="/admin/categories/{$category.idcategory}/products/{$value.idproduct}/add" class="btn btn-primary btn-xs pull-right"><i class="fas fa-arrow-right"></i> Adicionar</a>
                             </td>
                             </tr>
                             {/loop}
@@ -70,7 +70,7 @@
                             <td>{$value.idproduct}</td>
                             <td>{$value.desproduct}</td>
                             <td>
-                                <a href="/admin/categories/{$category.idcategory}/products/{$value.idproduct}/remove" class="btn btn-primary btn-xs pull-right"><i class="fa fa-arrow-left"></i> Remover</a>
+                                <a href="/admin/categories/{$category.idcategory}/products/{$value.idproduct}/remove" class="btn btn-primary btn-xs pull-right"><i class="fas fa-arrow-left"></i> Remover</a>
                             </td>
                             </tr>
                             {/loop}
