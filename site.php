@@ -7,8 +7,14 @@ use \Hcode\Model\Cart;
 use \Hcode\Model\Address;
 use \Hcode\Model\User;
 
+/*
 
-// Rota p/ o SITE
+ROTAS REFERENTES AO SITE DO E-COMMERCE
+
+*/
+
+
+// SITE
 $app->get('/', function () {
 
     $products = new Product();   
@@ -19,7 +25,7 @@ $app->get('/', function () {
     ]);
 });
 
-// Rota p/ CATEGORIAS
+// CATEGORIAS
 $app->get("/categories/:idcategory", function ($idcategory) {
 
     $page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1;
@@ -63,6 +69,7 @@ $app->get("/cart", function () {
 
     $cart = Cart::getFromSession();
 
+    // Redirecionar para...
     $page = new Page();
     $page->setTpl("cart", [
         'cart' => $cart->getValues(),
@@ -84,6 +91,7 @@ $app->get("/cart/:idproduct/add", function ($idproduct) {
         $cart->addProduct($product);        
     }
 
+    // Redirecionar para...
     header("Location: /cart");
     exit;
 });
@@ -97,6 +105,7 @@ $app->get("/cart/:idproduct/minus", function ($idproduct) {
     $cart = Cart::getFromSession();
     $cart->removeProduct($product);
 
+    // Redirecionar para...
     header("Location: /cart");
     exit;
 });
@@ -110,6 +119,7 @@ $app->get("/cart/:idproduct/remove", function ($idproduct) {
     $cart = Cart::getFromSession();
     $cart->removeProduct($product, true);
 
+    // Redirecionar para...
     header("Location: /cart");
     exit;
 });
@@ -133,6 +143,7 @@ $app->get("/checkout", function () {
 
     $address = new Address();
 
+    // Redirecionar para...
     $page = new Page();
     $page->setTpl("checkout", [
         'cart' => $cart->getValues(),
@@ -307,6 +318,75 @@ $app->post("/forgot/reset", function () {
     $page = new Page();
     $page->setTpl("forgot-reset-sucess");
 
+});
+
+// PROFILE
+$app->get("/profile", function () {
+
+    // Verificar login do usuário
+    User::verifyLogin(false);
+
+    // Capturar sessão do usuário
+    $user = User::getFromSession();
+
+    // Direcionar para...
+    $page = new Page();
+    $page->setTpl("profile"),[
+        'user' => $user->getValues(),
+        'profileMsg' => User::getSuccess(),
+        'profileError' => User::getError()
+    ];
+});
+
+// SALVAR EDIÇÃO DOS DADOS
+$app->post("/profile", function () {
+
+    // Verificar login do usuário
+    User::verifyLogin(false);
+
+    // Verificação do nome
+    if (!isset($_POST['desperson']) || $_POST['desperson'] === '') {
+        
+        User::setError("Preencha o seu nome.");
+        // Redirecionar para... 
+        header("Location: /profile");
+        exit;
+    }
+    // Verificação do e-mail
+    if (!isset($_POST['desemail']) || $_POST['desemail'] === '') {
+       
+        User::setError("Preencha o seu email.");
+        // Redirecionar para... 
+        header("Location: /profile");
+        exit;
+    }
+    
+    // Capturar sessão do usuário
+    $user = User::getFromSession();
+
+    // Verificação se o e-mail já está sendo usado
+    if ($_POST['desemail'] !== $user->getdesemail()) {        
+        if (User::checkLoginExists($_POST['desemail']) === true) {
+            
+            User::setError("Esse e-mail já está cadastrado.");
+            // Redirecionar para... 
+            header("Location: /profile");
+            exit;
+        }          
+    }
+
+    $_POST['inadmin'] = $user->getinadmin();
+    $_POST['despassword'] = $user->getdespassword();
+    $_POST['deslogin'] = $_POST['desemail'];
+
+    $user->setData($_POST);
+    $user->save();
+
+    User::setSuccess("Seus dados foram salvos com sucesso.");
+
+    // Redirecionar para... 
+    header("Location: /profile");
+    exit;
 });
 
 

@@ -7,28 +7,31 @@ use \Hcode\Model;
 use \Hcode\Mailer;
 
 /*
-
-::getFromSession()
-::checkLogin()
-::login()
-::verifyLogin()
-::logout()
-::listAll()
-save()
-get()
-update()
-delete()
-::getForgot()
-::validForgotDecrypt()
-::setForgotUsed()
-setPassword()
-::setErrorRegister()
-::getErrorRegister()
-::clearErrorRegister()
-::checkLoginExist()
-getPasswordHash()
-
-
+    ::getFromSession()
+    ::checkLogin()
+    ::login()
+    ::verifyLogin()
+    ::logout()
+    ::listAll()
+    save()
+    get()
+    update()
+    delete()
+    ::getForgot()
+    ::validForgotDecrypt()
+    ::setForgotUsed()
+    setPassword()
+    ::setError()
+    ::getError()
+    ::clearError()
+    ::setSuccess()
+    ::getSuccess()
+    ::clearSuccess()
+    ::setErrorRegister()
+    ::getErrorRegister()
+    ::clearErrorRegister()
+    ::checkLoginExist()
+    getPasswordHash()
  */
 
 class User extends Model
@@ -37,6 +40,7 @@ class User extends Model
     const SECRET = "HcodePhp7_Secret";
     const ERROR = "UserError";
     const ERROR_REGISTER = "UserErrorRegister";
+    const SUCCESS = "UserSuccess";
 
     public static function getFromSession()
     {
@@ -277,6 +281,44 @@ class User extends Model
             ":password"=>$password,
             ":iduser"=>$this->getiduser()
         ));
+    }
+
+    public static function setError($msg)
+    {
+        $_SESSION[User::ERROR] = $msg;
+    }
+
+    public static function getError()
+    {
+        $msg = (isset($_SESSION[User::ERROR]) && $_SESSION[User::ERROR]) ? $_SESSION[User::ERROR] : '';
+
+        User::clearError();
+
+        return $msg;
+    }
+
+    public static function clearError()
+    {
+        $_SESSION[User::ERROR] = null;
+    }
+
+    public static function setSuccess($msg)
+    {
+        $_SESSION[User::SUCCESS] = $msg;
+    }
+
+    public static function getSuccess()
+    {
+        $msg = (isset($_SESSION[User::SUCCESS]) && $_SESSION[User::SUCCESS]) ? $_SESSION[User::SUCCESS] : '';
+
+        User::clearSuccess();
+
+        return $msg;
+    }
+
+    public static function clearSuccess()
+    {
+        $_SESSION[User::SUCCESS] = null;
     }
 
     public static function setErrorRegister($msg)
