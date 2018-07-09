@@ -18,7 +18,8 @@ ROTAS REFERENTES AO SITE DO E-COMMERCE
 $app->get('/', function () {
 
     $products = new Product();   
-
+    
+    // Direcionar para template com as informações
     $page = new Page();
     $page->setTpl("index", [
         'products' => Product::checkList($products)
@@ -43,6 +44,7 @@ $app->get("/categories/:idcategory", function ($idcategory) {
         ]);
     }
 
+    // Direcionar para template com as informações
     $page = new Page();
     $page->setTpl("category", [
         'category' => $category->getValue(),
@@ -56,6 +58,7 @@ $app->get("/products/:desurl", function ($desurl) {
     $product = new Product();
     $product->getFromURL($desurl);
 
+    // Direcionar para template com as informações
     $page = new Page();
     $page->setTpl("product-detail", [
         'product' => $product->getValues(),
@@ -69,7 +72,7 @@ $app->get("/cart", function () {
 
     $cart = Cart::getFromSession();
 
-    // Redirecionar para...
+    // Direcionar para template com as informações
     $page = new Page();
     $page->setTpl("cart", [
         'cart' => $cart->getValues(),
@@ -138,23 +141,124 @@ $app->post("/cart/freight", function ($idproduct) {
 $app->get("/checkout", function () {
     // Verficiar se o usuários está logado
     User::verifyLogin(false);
+    
+    $address = new Address();
 
     $cart = Cart::getFromSession();
 
-    $address = new Address();
+    if (isset($_GET['zipcode'])) {
+        $_GET['zipcode'] = $cart->getzipcode();
+    }
 
-    // Redirecionar para...
+    if (isset($_GET['zipcode'])) {        
+    
+        $address->loadFromCEP($_GET['zipcode']);
+        
+        $cart->setdeszipcode($_GET['zipcode']);
+        $cart->save();
+        $cart->getCalculateTotal();   
+    }
+
+    if (!$address->getdesaddress()) $address->setdesaddress('');
+    if (!$address->getdescomplement()) $address->setdescomplement('');
+    if (!$address->getdesdistrict()) $address->setdesdistrict('');
+    if (!$address->getdescity()) $address->setdescity('');
+    if (!$address->getdesstate()) $address->setdesstate('');
+    if (!$address->getdescountry()) $address->setdescountry('');
+    if (!$address->getdeszipcode()) $address->setdeszipcode('');
+
+
+
+
+    // Direcionar para template com as informações
     $page = new Page();
     $page->setTpl("checkout", [
         'cart' => $cart->getValues(),
-        'address' => $address->getValues()
+        'address' => $address->getValues(),
+        'products'=> $cart->getProducts(),
+        'error' => Address::getMsgError()
     ]);
     
 });
 
+
+$app->post("/checkout", function () {
+    
+    // Verficiar se o usuários está logado
+    User::verifyLogin(false);
+
+    // [INÍCIO] Validação dos campos: CEP, Endereço, Bairro, Cidade, Estado, País
+    if (!isset($_POST['zipcode']) || $_POST['zipcode'] === '') {
+        // Msg de Erro
+        Address::setMsgError("Informe o CEP.");
+        // Redirecionar para...
+        header("Location: /checkout");
+        exit;
+    }
+
+    if (!isset($_POST['desaddress']) || $_POST['desaddress'] === '') {
+        // Msg de Erro
+        Address::setMsgError("Informe o Endereço.");
+        // Redirecionar para...
+        header("Location: /checkout");
+        exit;
+    }
+
+    if (!isset($_POST['desdistrict']) || $_POST['desdistrict'] === '') {
+        // Msg de Erro
+        Address::setMsgError("Informe o Bairro.");
+        // Redirecionar para...
+        header("Location: /checkout");
+        exit;
+    }
+
+    if (!isset($_POST['descity']) || $_POST['descity'] === '') {
+        // Msg de Erro
+        Address::setMsgError("Informe a Cidade.");
+        // Redirecionar para...
+        header("Location: /checkout");
+        exit;
+    }
+
+    if (!isset($_POST['desstate']) || $_POST['desstate'] === '') {
+        // Msg de Erro
+        Address::setMsgError("Informe o Estado.");
+        // Redirecionar para...
+        header("Location: /checkout");
+        exit;
+    }
+
+    if (!isset($_POST['descountry']) || $_POST['descountry'] === '') {
+        // Msg de Erro
+        Address::setMsgError("Informe o País.");
+        // Redirecionar para...
+        header("Location: /checkout");
+        exit;
+    }
+    // [FIM] Validação dos campos: CEP, Endereço, Bairro, Cidade, Estado, País
+
+    // Capturar o usuário
+    $user = User::getFromSession();
+
+    $address = new Address();
+
+    $_POST['deszipcode'] = $_POST['zipcode'];
+    $_POST['idperson'] = $user->getidperson();
+
+    $address->setData($_POST);
+    $address->save();
+
+    // Redirecionar para...
+    header("Location: /order");
+    exit;
+
+});
+
+
 // LOGIN PARA O SITE
 $app->get("/login", function () {
-    
+
+    // Direcionar para template com as informações
     $page = new Page();
     $page->setTpl("login", [
         'error' => User::setError(),
@@ -331,11 +435,11 @@ $app->get("/profile", function () {
 
     // Direcionar para...
     $page = new Page();
-    $page->setTpl("profile"),[
+    $page->setTpl("profile",[
         'user' => $user->getValues(),
         'profileMsg' => User::getSuccess(),
         'profileError' => User::getError()
-    ];
+    ]);
 });
 
 // SALVAR EDIÇÃO DOS DADOS
