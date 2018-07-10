@@ -13,11 +13,10 @@ class Sql {
 
 	public function __construct()
 	{
-
+		// Conexão com o BD
 		$this->conn = new \PDO(
-			"mysql:dbname=".Sql::DBNAME.";host=".Sql::HOSTNAME, 
-			Sql::USERNAME,
-			Sql::PASSWORD
+			"mysql:dbname=".Sql::DBNAME.
+			";host=".Sql::HOSTNAME, Sql::USERNAME, Sql::PASSWORD
 		);
 
 	}
