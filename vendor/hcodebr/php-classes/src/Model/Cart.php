@@ -288,8 +288,10 @@ class Cart extends Model
 
     public function getCalculateTotal()
     {   
+        // Atualizar frente
         $this->updateFreight();
 
+        // Carregar todos os produtos com subtotal e total
         $totals = $this->getProductsTotals();
         
         $this->setvlsubtotal($totals['vlprice']);

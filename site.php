@@ -242,6 +242,7 @@ $app->post("/checkout", function () {
     // Capturar o usuário
     $user = User::getFromSession();
 
+    // Trazer o endereço
     $address = new Address();
 
     $_POST['deszipcode'] = $_POST['zipcode'];
@@ -250,18 +251,19 @@ $app->post("/checkout", function () {
     $address->setData($_POST);
     $address->save();
 
-    // Capturar o carrinho
+    // Capturar o carrinho e calcular o total
     $cart = Cart::getFromSession();
         
     $totals = $cart->getCalculateTotal();
 
+    // Definir o pedido com as informações
     $order = new Order();
     $order->setData([
         'idcart' => $cart->getidcart(),
         'address' => $address->getidaddress(),
         'iduser' => $user->getiduser(),
         'idstatus' => OrderStatus::EM_ABERTO,
-        'vltotal' => $totals['vlprice'] + $cart->getvlfreight() 
+        'vltotal' => $cart->getvltotal() 
     ]);
     $order->save();
 
@@ -541,6 +543,7 @@ $app->get("/boleto/:idorder", function ($idorder) {
     $taxa_boleto = 5.00;
     $data_venc = date("d/m/Y", time() + ($dias_de_prazo_para_pagamento * 86400));  // Prazo de X dias OU informe data: "13/04/2006"; 
     $valor_cobrado = formatPrice($order->getvltotal()); // Valor - REGRA: Sem pontos na milhar e tanto faz com "." ou "," ou com 1 ou 2 ou sem casa decimal
+    $valor_cobrado = str_replace(".", "", $valor_cobrado);
     $valor_cobrado = str_replace(",", ".", $valor_cobrado);
     $valor_boleto = number_format($valor_cobrado + $taxa_boleto, 2, ',', '');
 
@@ -597,5 +600,46 @@ $app->get("/boleto/:idorder", function ($idorder) {
     require_once($path . "layout_itau.php");   
 
 });
+
+$app->get("/profile/orders", function () {
+
+    // Verificar login do usuário
+    User::verifyLogin(false);
+
+    $user = User::getFromSession();
+
+    // Direcionar com as informações para...
+    $page = new Page();
+    $page->setTpl("profile-orders", [
+        'orders' => $user->getOrders(),
+    ]);
+
+});
+
+$app->get("/profile/orders/:idorder", function ($idorder) {
+
+    // Verificar login do usuário
+    User::verifyLogin(false);
+
+    // Carregar o pedido
+    $order = new Order();
+    $order->get((int)$idorder);
+
+    // Carregar o carrinho do pedido
+    $cart = new Cart();
+    $cart->get((int)$order->getidcart());
+    $cart->getCalculateTotal();
+
+    // Direcionar com as informações para...
+    $page = new Page();
+    $page->setTpl("profile-orders-detail", [
+        'order' => $order->getValues(),
+        'cart' => $cart->getValues(),
+        'products' => $cart->getProduct()
+    ]);
+
+});
+
+
 
 ?>
