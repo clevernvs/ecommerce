@@ -77,6 +77,7 @@ class User extends Model
 
     public static function login($login, $password)
     {
+        // Conectar com o BD
         $sql = new Sql();
 
         $results = $sql->select("SELECT * FROM tb_users WHERE deslogin = :LOGIN", array(
@@ -123,12 +124,14 @@ class User extends Model
 
     public static function listAll()
     {
+        // Conectar com o BD
         $sql = new Sql();
         return $sql->select("SELECT * FROM tb_users INNER JOIN tb_persons b USING(idperson) ORDER BY b.desperson");
     }
 
     public function save()
     {
+        // Conectar com o BD
         $sql = new Sql();
 
         $results = $sql->select("CALL sp_users_save(:desperson, :deslogin, :despassword, :desmail, :nrphone, :inadmin)", array(
@@ -145,6 +148,7 @@ class User extends Model
 
     public function get($iduser)
     {
+        // Conectar com o BD
         $sql = new Sql();
 
         $results = $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b USING(idperson) WHERE a.iduser = :iduser", array(
@@ -159,6 +163,7 @@ class User extends Model
 
     public function update()
     {
+        // Conectar com o BD
         $sql = new Sql();
 
         $results = $sql->select("CALL sp_usersupdate_save(:iduser, :desperson, :deslogin, :despassword, :desmail, :nrphone, :inadmin)", array(
@@ -176,6 +181,7 @@ class User extends Model
 
     public function delete()
     {
+        // Conectar com o BD
         $sql = new Sql();
 
         $results = $sql->select("CALL sp_users_delete(:iduser)", array(
@@ -186,7 +192,8 @@ class User extends Model
 
     // Enviar e-mail para recuperação
     public static function getForgot($email, $inadmin = true)
-    {
+    {   
+        // Conectar com o BD
         $sql = new Sql();
 
         $results = $sql->select("
@@ -244,6 +251,7 @@ class User extends Model
     {         
         $idrecovery = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, User::SECRET, base64_decode($code), MCRYPT_MODE_ECB);
 
+        // Conectar com o BD
         $sql = new Sql();
         $results = $sql->select("
             SELECT * 
@@ -267,6 +275,7 @@ class User extends Model
 
     public static function setForgotUsed($idrecovery)
     {
+        // Conectar com o BD
         $sql = new Sql();
         $sql->query("UPDATE tb_userspasswordsrecoveries SET dtrecovery = NOW() WHERE idrecovery = :idrecovery", array(
             ":idrecovery"=>$idrecovery
@@ -275,6 +284,7 @@ class User extends Model
 
     public function setPassword($password)
     {
+        // Conectar com o BD
         $sql = new Sql();
         $sql->query("UPDATE tb_users SET despassword = :password WHERE iduser = :iduser", array(
             ":password"=>$password,
@@ -341,6 +351,7 @@ class User extends Model
 
     public static function checkLoginExist($login)
     {
+        // Conectar com o BD
         $sql = new Sql();
 
         $results = $sql->select("SELECT * FROM tb_users WHERE deslogin = :deslogin", [
@@ -359,6 +370,7 @@ class User extends Model
 
     public function getOrders($idorder)
     {
+        // Conectar com o BD
         $sql = new Sql();
 
         $results = $sql->select(

@@ -1,9 +1,8 @@
 <?php
 
-// Arquivo de config de Rotas
+// Arquivo de config de Rotas do Slim
 
 session_start();
-
 require_once("vendor/autoload.php");
 
 use \Slim\Slim;
@@ -18,6 +17,7 @@ require_once("admin.php");
 require_once("admin-categories.php");
 require_once("admin-users.php");
 require_once("admin-products.php");
+require_once("admin-orders.php");
 
 $app->run();
 

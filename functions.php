@@ -6,10 +6,13 @@ use \Hcode\Model\Cart;
 /*
 
 formatPrice()
+formatDate()
 checkLogin()
 getUserName()
+getCartNrQtd()
+getCartVlSubTotal()
 
-*/
+ */
 
 // Formatar o preço para valor 0,00
 function formatPrice ($vlprice) 
@@ -19,6 +22,11 @@ function formatPrice ($vlprice)
     }
 
     return number_format($vlprice, 2, ",", ".");
+}
+
+function formatDate($date)
+{
+    return date('d/m/Y', strtotime($date));
 }
 
 // Checar o login
